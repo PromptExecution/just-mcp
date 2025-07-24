@@ -1,6 +1,7 @@
 use clap::{Arg, Command};
 use just_mcp_lib::parser::parse_justfile;
 use just_mcp_lib::executor::execute_recipe;
+use just_mcp_lib::validator::{validate_with_help, get_signature_help, format_signature_help};
 use std::error::Error;
 use std::path::Path;
 
@@ -39,6 +40,17 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .index(2)
                 )
         )
+        .subcommand(
+            Command::new("help-recipe")
+                .about("Show signature help for a recipe")
+                .arg(
+                    Arg::new("recipe")
+                        .value_name("RECIPE")
+                        .help("Name of the recipe to show help for")
+                        .required(true)
+                        .index(1)
+                )
+        )
         .get_matches();
 
     let justfile_path = matches.get_one::<String>("justfile").unwrap();
@@ -61,6 +73,24 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .cloned()
                 .collect();
             
+            // Find the recipe for validation
+            let recipe = match justfile.recipes.iter().find(|r| r.name == *recipe_name) {
+                Some(recipe) => recipe,
+                None => {
+                    eprintln!("Recipe '{}' not found", recipe_name);
+                    std::process::exit(1);
+                }
+            };
+            
+            // Validate arguments before execution
+            let validation = validate_with_help(recipe, &args);
+            if !validation.is_valid {
+                for error in &validation.errors {
+                    eprintln!("Error: {}", error.message);
+                }
+                std::process::exit(1);
+            }
+            
             let working_dir = path.parent().unwrap_or_else(|| Path::new("."));
             
             match execute_recipe(&justfile, recipe_name, &args, working_dir) {
@@ -78,6 +108,29 @@ fn main() -> Result<(), Box<dyn Error>> {
                     std::process::exit(1);
                 }
             }
+        }
+        Some(("help-recipe", sub_matches)) => {
+            let justfile = match parse_justfile(path) {
+                Ok(jf) => jf,
+                Err(e) => {
+                    eprintln!("Error parsing Justfile: {}", e);
+                    std::process::exit(1);
+                }
+            };
+            
+            let recipe_name = sub_matches.get_one::<String>("recipe").unwrap();
+            
+            let recipe = match justfile.recipes.iter().find(|r| r.name == *recipe_name) {
+                Some(recipe) => recipe,
+                None => {
+                    eprintln!("Recipe '{}' not found", recipe_name);
+                    std::process::exit(1);
+                }
+            };
+            
+            let help = get_signature_help(recipe);
+            let formatted = format_signature_help(&help);
+            println!("{}", formatted);
         }
         Some(("introspect", _)) => {
             match parse_justfile(path) {
@@ -111,8 +164,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("just-mcp v{} initialized", env!("CARGO_PKG_VERSION"));
             println!("Using Justfile: {}", justfile_path);
             println!("Commands:");
-            println!("  just-mcp introspect      Parse and display Justfile information");
-            println!("  just-mcp run <recipe>    Execute a recipe");
+            println!("  just-mcp introspect         Parse and display Justfile information");
+            println!("  just-mcp run <recipe>       Execute a recipe");
+            println!("  just-mcp help-recipe <name> Show signature help for a recipe");
         }
     }
     

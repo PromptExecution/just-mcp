@@ -1,5 +1,6 @@
 pub mod parser;
 pub mod executor;
+pub mod validator;
 
 use std::collections::HashMap;
 
