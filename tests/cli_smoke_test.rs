@@ -10,7 +10,7 @@ fn test_cli_help() {
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(stdout.contains("MCP Server for Justfile Integration"));
-    assert!(stdout.contains("--file"));
+    assert!(stdout.contains("--directory"));
 }
 
 #[test]
@@ -35,5 +35,5 @@ fn test_cli_basic_run() {
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(stdout.contains("just-mcp"));
-    assert!(stdout.contains("initialized"));
+    assert!(stdout.contains("MCP Tools Available"));
 }

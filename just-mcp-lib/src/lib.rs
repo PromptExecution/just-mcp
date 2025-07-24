@@ -2,6 +2,7 @@ pub mod parser;
 pub mod executor;
 pub mod validator;
 pub mod environment;
+pub mod mcp_server;
 
 use std::collections::HashMap;
 
