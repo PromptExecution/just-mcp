@@ -2,6 +2,7 @@ use clap::{Arg, Command};
 use just_mcp_lib::parser::parse_justfile;
 use just_mcp_lib::executor::execute_recipe;
 use just_mcp_lib::validator::{validate_with_help, get_signature_help, format_signature_help};
+use just_mcp_lib::environment::get_environment_info;
 use std::error::Error;
 use std::path::Path;
 
@@ -50,6 +51,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         .required(true)
                         .index(1)
                 )
+        )
+        .subcommand(
+            Command::new("env-info")
+                .about("Show MCP environment information")
         )
         .get_matches();
 
@@ -132,6 +137,40 @@ fn main() -> Result<(), Box<dyn Error>> {
             let formatted = format_signature_help(&help);
             println!("{}", formatted);
         }
+        Some(("env-info", _)) => {
+            let env_info = get_environment_info();
+            
+            println!("MCP Environment Information:");
+            println!("==========================");
+            
+            // Display basic stats
+            if let Some(var_count) = env_info.get("variable_count") {
+                println!("Environment variables: {}", var_count);
+            }
+            if let Some(source_count) = env_info.get("source_count") {
+                println!("Sources: {}", source_count);
+            }
+            if let Some(sources) = env_info.get("sources") {
+                println!("Source types: {}", sources);
+            }
+            if let Some(has_snapshot) = env_info.get("has_snapshot") {
+                println!("Has snapshot: {}", has_snapshot);
+            }
+            
+            // Display MCP-specific variables
+            println!("\nMCP Variables:");
+            let mut found_mcp_vars = false;
+            for (key, value) in &env_info {
+                if key.starts_with("mcp_") {
+                    let var_name = key.strip_prefix("mcp_").unwrap().to_uppercase();
+                    println!("  {}: {}", var_name, value);
+                    found_mcp_vars = true;
+                }
+            }
+            if !found_mcp_vars {
+                println!("  (No MCP-specific environment variables found)");
+            }
+        }
         Some(("introspect", _)) => {
             match parse_justfile(path) {
                 Ok(justfile) => {
@@ -167,6 +206,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("  just-mcp introspect         Parse and display Justfile information");
             println!("  just-mcp run <recipe>       Execute a recipe");
             println!("  just-mcp help-recipe <name> Show signature help for a recipe");
+            println!("  just-mcp env-info           Show MCP environment information");
         }
     }
     
