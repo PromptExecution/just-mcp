@@ -187,24 +187,28 @@ This project is licensed under [LICENSE](LICENSE).
 - Created initial `CHANGELOG.md` for release tracking
 - Updated `.gitignore` with Rust-specific entries
 
-### 🚧 **Additional Steps for Release**
-
-#### **Before First Release:**
-1. **Fix Integration Tests**: The `mcp_integration_test.rs` has compilation errors that need to be resolved
-2. **Set GitHub Secrets**: Add `CARGO_REGISTRY_TOKEN` to repository secrets for automated publishing
-3. **Test Release Process**: Run `cog bump --dry-run` to verify versioning works
-4. **Create Initial Tag**: Use `git tag v0.1.0` and push to trigger first release
+### 🚀 **Production Deployment**
 
 #### **Development Workflow:**
-- All future commits must follow conventional commit format (enforced by git hooks)
-- Use `feat:`, `fix:`, `docs:`, etc. prefixes 
-- Push to `wip/phase4` branch triggers automated releases
-- Library tests pass ✅ (25/25), but integration tests need fixing
+- All commits must follow conventional commit format (enforced by git hooks)
+- Use `feat:`, `fix:`, `docs:`, etc. prefixes for automatic versioning
+- Push to `main` branch triggers automated releases and crates.io publishing
+- Library tests pass ✅ (25/25) with comprehensive test coverage
 
-#### **Crates.io Publishing:**
-- Library crate (`just-mcp-lib`) publishes first, then binary crate (`just-mcp`)
-- All metadata is properly configured for discoverability
-- Categories: command-line-utilities, development-tools, build-utils
+#### **Release Process:**
+- **Automated Versioning**: Cocogitto analyzes commit messages for semantic versioning
+- **GitHub Releases**: Automatic changelog generation and GitHub release creation
+- **Crates.io Publishing**: Library crate (`just-mcp-lib`) publishes first, then binary crate (`just-mcp`)
+- **CI/CD Pipeline**: Multi-platform testing (Ubuntu, Windows, macOS) with formatting and clippy checks
+
+#### **Installation:**
+```bash
+# Install from crates.io
+cargo install just-mcp
+
+# Or download from GitHub releases
+wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-mcp
+```
 
 ## 🔗 **Related Projects**
 
