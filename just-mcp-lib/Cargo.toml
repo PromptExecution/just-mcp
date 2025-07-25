@@ -2,6 +2,15 @@
 name = "just-mcp-lib"
 version = "0.1.0"
 edition = "2024"
+authors = ["Brian Horakh <brian@promptexecution.com>"]
+description = "Core library for just-mcp: MCP server for Justfile integration"
+documentation = "https://docs.rs/just-mcp-lib"
+homepage = "https://github.com/promptexecution/just-mcp"
+repository = "https://github.com/promptexecution/just-mcp"
+license = "MIT"
+keywords = ["mcp", "justfile", "parser", "executor", "llm"]
+categories = ["parser-implementations", "development-tools", "development-tools::build-utils"]
+readme = "../README.md"
 
 [dependencies]
 dotenvy = "0.15.7"

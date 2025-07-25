@@ -1,0 +1,88 @@
+# just-mcp: MCP Server for Justfile Integration
+
+## Overview
+just-mcp is a Model Context Protocol (MCP) server that provides LLM integration for Justfile workflows. It enables AI assistants to introspect, validate, and execute Justfile recipes through a structured JSON-RPC interface. The server bridges the gap between AI tools and build automation by providing LSP-style completion, validation, and execution capabilities for Justfiles.
+
+## Core Features
+- **Justfile Parsing & Introspection**: Parse Justfiles and extract recipe names, parameters, documentation, and dependencies
+- **Recipe Execution**: Execute Justfile recipes with structured output capture (stdout, stderr, exit codes)
+- **LSP-Style Completion**: Provide intelligent completion for recipe names, parameters, and values
+- **Argument Validation**: Validate recipe arguments before execution with structured error reporting
+- **Diagnostics & Validation**: Detect syntax errors, duplicate recipes, and undefined variables
+- **Dependency Graph Support**: Parse and visualize recipe dependencies with execution planning
+- **Environment Awareness**: Support .env files and per-recipe environment overrides
+- **MCP Protocol Compliance**: Full JSON-RPC interface compatible with MCP specification
+
+## User Experience
+- **CLI Interface**: Direct command-line usage for testing and development
+- **LLM Integration**: Seamless integration with AI assistants through MCP protocol
+- **Developer Tools**: LSP-compatible features for IDE integration
+- **Structured Output**: All operations return structured JSON for programmatic consumption
+
+## Technical Architecture
+- **Rust Implementation**: Built with Rust for performance and reliability
+- **Modular Design**: Separate library crate (just-mcp-lib) and binary crate (just-mcp)
+- **Error Handling**: Structured error management using snafu crate
+- **JSON-RPC Interface**: Standard MCP protocol implementation over stdio
+- **Cross-Platform**: Support for local files, stdin, remote sources, and virtual file systems
+
+## Development Roadmap
+
+### Phase 0: Project Foundation
+Initialize Rust project structure with CLI scaffolding and basic hello-world functionality.
+
+### Phase 1: Core Parsing
+Implement Justfile parsing with recipe introspection, parameter extraction, and documentation parsing.
+
+### Phase 2: Recipe Execution
+Add recipe execution capabilities with structured output capture and error handling.
+
+### Phase 3: Validation & Signatures
+Implement argument validation and signature help with detailed parameter information.
+
+### Phase 4: Completion System
+Build intelligent completion system for recipes, parameters, and values.
+
+### Phase 5: LSP Scaffolding
+Add JSON-RPC interface with MCP-compatible methods and stdio communication mode.
+
+### Phase 6: Diagnostics
+Implement comprehensive diagnostics for syntax errors, duplicates, and validation issues.
+
+### Phase 7: Environment Support
+Add .env file support and environment variable management.
+
+### Phase 8: Dependency Graphs
+Implement dependency parsing, visualization, and execution planning.
+
+### Phase 9: Virtual File System
+Support for stdin, remote sources, and in-memory buffers for LSP integration.
+
+### Phase 10: Plugin System
+Add custom metadata support and plugin hooks for extensibility.
+
+### Phase 11: MCP Compliance
+Complete MCP protocol implementation with version negotiation and conformance testing.
+
+### Phase 12: Release Polish
+Final packaging, documentation, CI/CD setup, and crate publication.
+
+## Logical Dependency Chain
+1. **Foundation First**: Project setup and basic CLI structure
+2. **Core Functionality**: Parsing and introspection as the foundation for all features
+3. **Execution Layer**: Recipe execution builds on parsing capabilities
+4. **Enhancement Features**: Validation, completion, and diagnostics enhance the core
+5. **Protocol Layer**: LSP/MCP interface wraps existing functionality
+6. **Advanced Features**: Dependencies, environment, and plugins extend capabilities
+7. **Polish & Release**: Testing, documentation, and packaging finalize the product
+
+## Risks and Mitigations
+- **Justfile Complexity**: Mitigate by starting with basic parsing and incrementally adding features
+- **MCP Protocol Evolution**: Design modular protocol layer that can adapt to changes
+- **Performance**: Use Rust's performance characteristics and implement efficient parsing
+- **Cross-Platform**: Test on multiple platforms and handle path normalization early
+
+## Appendix
+- **Development Methodology**: Following _b00t_ methodology with TDD and 6C Turbo-Agile
+- **Tech Stack**: Rust 1.82+, clap for CLI, snafu for errors, cargo toolchain
+- **Testing Strategy**: Unit tests, integration tests, and MCP protocol conformance tests
