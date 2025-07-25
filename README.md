@@ -15,7 +15,7 @@ No more watching LLMs execute `just -l` to get command lists, inevitably start r
 ### **Safer Than Raw Bash Access**
 Just-mcp is fundamentally safer than bash. If you read HackerNews, there's a story at least once daily about operators whose LLMs start forgetting, hallucinating, and eventually breaking down - deleting files and doing nasty unwanted things. Giving LLMs unsupervised, unrestricted bash access without carefully monitoring context consumption is a recipe for disaster.
 
-**Using Justfile fixes that.** Even if the LLM modifies its own bash script, the next context is memoized by the justfile (hopefully in an idempotent git repo).
+**Using Justfile fixes that.** Even if the LLM modifies its own justfile, the next context is memoized by the justfile (hopefully in an idempotent git repo).  This abstraction shields the llm from the command line complexity where hallucinations or attention tracking the current working directory cause it to go over the rails and off the cliff.  
 
 ### **Powerful Agent Execution Tool**
 Just-mcp is perfect for anybody doing agent execution:
