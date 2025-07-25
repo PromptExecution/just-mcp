@@ -30,3 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git hooks for commit linting and testing
 
 - - -
+## v0.1.0 - 2025-07-25
+#### Bug Fixes
+- add changelog separator for cocogitto - (1d6101e) - elasticdotventures
+- update GitHub Actions branch references and cog config - (63c75b8) - elasticdotventures
+#### Features
+- setup cocogitto, CI/CD, and crates.io preparation - (8945d2f) - elasticdotventures
+#### Miscellaneous
+- cargo fmt - (00a3fc8) - elasticdotventures
+
+- - -
