@@ -1,8 +1,8 @@
 /*!
 # MCP Integration Test with rmcp SDK - WORKING VERSION
 
-## Purpose  
-**Type-safe SDK integration testing** - validates that our MCP server works correctly 
+## Purpose
+**Type-safe SDK integration testing** - validates that our MCP server works correctly
 with the official Rust MCP SDK (rmcp) using proper async service patterns.
 
 This version has been fixed to work with rmcp 0.3.0 API requirements.
@@ -10,21 +10,21 @@ This version has been fixed to work with rmcp 0.3.0 API requirements.
 
 use rmcp::{
     ServiceExt,
-    transport::{ConfigureCommandExt, TokioChildProcess},
     model::CallToolRequestParam,
+    transport::{ConfigureCommandExt, TokioChildProcess},
 };
 use serde_json::{Map, Value};
 use std::borrow::Cow;
-use tokio::time::{timeout, Duration};
+use tokio::time::{Duration, timeout};
 
 #[tokio::test]
 async fn test_mcp_server_integration_working() {
     // Create transport for our MCP server as child process
-    let transport = TokioChildProcess::new(
-        tokio::process::Command::new("cargo").configure(|cmd| {
+    let transport =
+        TokioChildProcess::new(tokio::process::Command::new("cargo").configure(|cmd| {
             cmd.args(["run", "--", "--stdio"]);
-        })
-    ).expect("Failed to create transport");
+        }))
+        .expect("Failed to create transport");
 
     // Create client and initialize (initialization is automatic with .serve())
     let client = ().serve(transport).await.expect("Failed to initialize client");
@@ -48,7 +48,7 @@ async fn test_mcp_server_integration_working() {
         client.peer().call_tool(CallToolRequestParam {
             name: Cow::Borrowed("list_recipes"),
             arguments: Some(Map::new()),
-        })
+        }),
     )
     .await
     .expect("List recipes timed out")
@@ -70,10 +70,13 @@ async fn test_mcp_server_integration_working() {
             name: Cow::Borrowed("run_recipe"),
             arguments: Some({
                 let mut map = Map::new();
-                map.insert("recipe_name".to_string(), Value::String("hello_simple".to_string()));
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello_simple".to_string()),
+                );
                 map
             }),
-        })
+        }),
     )
     .await
     .expect("Hello recipe timed out")
@@ -83,12 +86,14 @@ async fn test_mcp_server_integration_working() {
         rmcp::model::RawContent::Text(text) => text,
         _ => panic!("Expected text content"),
     };
-    
+
     // Parse the JSON response and check stdout
-    let result_json: serde_json::Value = serde_json::from_str(&content_str.text)
-        .expect("Failed to parse result JSON");
-    
-    let stdout = result_json["stdout"].as_str().expect("Expected stdout field");
+    let result_json: serde_json::Value =
+        serde_json::from_str(&content_str.text).expect("Failed to parse result JSON");
+
+    let stdout = result_json["stdout"]
+        .as_str()
+        .expect("Expected stdout field");
     assert!(stdout.contains("Hello, World!"));
 
     // Test calling hello recipe with custom parameter
@@ -98,11 +103,17 @@ async fn test_mcp_server_integration_working() {
             name: Cow::Borrowed("run_recipe"),
             arguments: Some({
                 let mut map = Map::new();
-                map.insert("recipe_name".to_string(), Value::String("hello".to_string()));
-                map.insert("args".to_string(), Value::String(r#"["Claude"]"#.to_string()));
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello".to_string()),
+                );
+                map.insert(
+                    "args".to_string(),
+                    Value::String(r#"["Claude"]"#.to_string()),
+                );
                 map
             }),
-        })
+        }),
     )
     .await
     .expect("Hello custom recipe timed out")
@@ -121,11 +132,19 @@ async fn test_mcp_server_integration_working() {
             name: Cow::Borrowed("run_recipe"),
             arguments: Some({
                 let mut map = Map::new();
-                map.insert("recipe_name".to_string(), Value::String("write_file".to_string()));
-                map.insert("args".to_string(), Value::String(r#"["test_output.txt", "Hello from MCP integration test!"]"#.to_string()));
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("write_file".to_string()),
+                );
+                map.insert(
+                    "args".to_string(),
+                    Value::String(
+                        r#"["test_output.txt", "Hello from MCP integration test!"]"#.to_string(),
+                    ),
+                );
                 map
             }),
-        })
+        }),
     )
     .await
     .expect("Write file recipe timed out")
@@ -145,11 +164,11 @@ async fn test_mcp_server_integration_working() {
 #[tokio::test]
 async fn test_get_recipe_info_working() {
     // Create transport and client
-    let transport = TokioChildProcess::new(
-        tokio::process::Command::new("cargo").configure(|cmd| {
+    let transport =
+        TokioChildProcess::new(tokio::process::Command::new("cargo").configure(|cmd| {
             cmd.args(["run", "--", "--stdio"]);
-        })
-    ).expect("Failed to create transport");
+        }))
+        .expect("Failed to create transport");
 
     let client = ().serve(transport).await.expect("Failed to initialize client");
 
@@ -160,10 +179,13 @@ async fn test_get_recipe_info_working() {
             name: Cow::Borrowed("get_recipe_info"),
             arguments: Some({
                 let mut map = Map::new();
-                map.insert("recipe_name".to_string(), Value::String("hello".to_string()));
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello".to_string()),
+                );
                 map
             }),
-        })
+        }),
     )
     .await
     .expect("Get recipe info timed out")

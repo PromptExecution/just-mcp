@@ -1,13 +1,13 @@
-/*! 
+/*!
 # Basic MCP Server Test
 
 ## Purpose
-**Direct protocol compliance testing** - validates that our MCP server correctly implements 
+**Direct protocol compliance testing** - validates that our MCP server correctly implements
 the Model Context Protocol at the wire format level using raw JSON-RPC over stdio.
 
 ## Approach
 - **Direct stdio communication**: Manual JSON message construction and parsing
-- **Synchronous I/O**: Simple BufReader for response handling  
+- **Synchronous I/O**: Simple BufReader for response handling
 - **Raw protocol validation**: Tests actual MCP wire format compliance
 - **Minimal dependencies**: Only std library + serde_json
 - **Smoke testing**: Ensures server doesn't crash and responds correctly
@@ -31,9 +31,9 @@ the Model Context Protocol at the wire format level using raw JSON-RPC over stdi
 - Debugging server crashes
 */
 
-use std::process::{Command, Stdio};
 use std::io::Write;
-use tokio::time::{timeout, Duration};
+use std::process::{Command, Stdio};
+use tokio::time::{Duration, timeout};
 
 #[tokio::test]
 async fn test_mcp_server_basic() {

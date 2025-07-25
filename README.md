@@ -4,6 +4,12 @@
 
 A production-ready MCP server that provides seamless integration with [Just](https://github.com/casey/just) command runner, enabling AI assistants to discover, execute, and introspect Justfile recipes through the standardized MCP protocol.
 
+## b00t
+```
+b00t mcp create just-mcp -- bash just-mcp --stdio "${REPO_ROOT}"
+b00t mcp export just-mcp
+```
+
 ## 🚀 Current Status: **67% Complete** (8/12 core tasks)
 
 ### ✅ **Implemented Features**

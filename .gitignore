@@ -32,3 +32,5 @@ tasks/
 
 /target
 target/*
+*~
+cache/*

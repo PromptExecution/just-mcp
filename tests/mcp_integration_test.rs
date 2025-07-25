@@ -2,7 +2,7 @@
 # MCP Integration Test with rmcp SDK
 
 ## Purpose
-**Type-safe SDK integration testing** - validates that our MCP server works correctly 
+**Type-safe SDK integration testing** - validates that our MCP server works correctly
 with the official Rust MCP SDK (rmcp) using proper async service patterns.
 
 ## Approach
@@ -14,7 +14,7 @@ with the official Rust MCP SDK (rmcp) using proper async service patterns.
 
 ## What This Tests
 - SDK compatibility and type safety
-- Async service lifecycle management  
+- Async service lifecycle management
 - Advanced MCP features (pagination, etc.)
 - Error handling and edge cases
 - Client-server communication patterns
@@ -33,21 +33,21 @@ with the official Rust MCP SDK (rmcp) using proper async service patterns.
 
 use rmcp::{
     ServiceExt,
-    transport::{ConfigureCommandExt, TokioChildProcess},
     model::CallToolRequestParam,
+    transport::{ConfigureCommandExt, TokioChildProcess},
 };
-use serde_json::{json, Map, Value};
+use serde_json::{Map, Value, json};
 use std::borrow::Cow;
-use tokio::time::{timeout, Duration};
+use tokio::time::{Duration, timeout};
 
 #[tokio::test]
 async fn test_mcp_server_integration() {
     // Create transport for our MCP server as child process
-    let transport = TokioChildProcess::new(
-        tokio::process::Command::new("cargo").configure(|cmd| {
+    let transport =
+        TokioChildProcess::new(tokio::process::Command::new("cargo").configure(|cmd| {
             cmd.args(["run", "--", "--stdio"]);
-        })
-    ).expect("Failed to create transport");
+        }))
+        .expect("Failed to create transport");
 
     // Create client and initialize (initialization is automatic with .serve())
     let client = ().serve(transport).await.expect("Failed to initialize client");
@@ -71,7 +71,7 @@ async fn test_mcp_server_integration() {
         client.peer().call_tool(CallToolRequestParam {
             name: Cow::Borrowed("list_recipes"),
             arguments: Some(Map::new()),
-        })
+        }),
     )
     .await
     .expect("List recipes timed out")
@@ -91,7 +91,7 @@ async fn test_mcp_server_integration() {
             arguments: Some(json!({
                 "recipe": "hello"
             })),
-        })
+        }),
     )
     .await
     .expect("Hello recipe timed out")
@@ -109,7 +109,7 @@ async fn test_mcp_server_integration() {
                 "recipe": "hello",
                 "args": ["Claude"]
             })),
-        })
+        }),
     )
     .await
     .expect("Hello custom recipe timed out")
@@ -127,7 +127,7 @@ async fn test_mcp_server_integration() {
                 "recipe": "write_file",
                 "args": ["test_output.txt", "Hello from MCP integration test!"]
             })),
-        })
+        }),
     )
     .await
     .expect("Write file recipe timed out")
@@ -144,11 +144,11 @@ async fn test_mcp_server_integration() {
 #[tokio::test]
 async fn test_get_recipe_info() {
     // Create transport and client
-    let transport = TokioChildProcess::new(
-        tokio::process::Command::new("cargo").configure(|cmd| {
+    let transport =
+        TokioChildProcess::new(tokio::process::Command::new("cargo").configure(|cmd| {
             cmd.args(["run", "--", "--stdio"]);
-        })
-    ).expect("Failed to create transport");
+        }))
+        .expect("Failed to create transport");
 
     let client = ().serve(transport).await.expect("Failed to initialize client");
 
@@ -160,7 +160,7 @@ async fn test_get_recipe_info() {
             arguments: Some(json!({
                 "recipe": "hello"
             })),
-        })
+        }),
     )
     .await
     .expect("Get recipe info timed out")

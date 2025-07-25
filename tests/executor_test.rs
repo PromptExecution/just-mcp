@@ -9,14 +9,14 @@ fn test_execute_simple_recipe() {
 hello:
     echo "Hello, World!"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "hello", &[], temp_dir.path()).unwrap();
-    
+
     println!("Result: {:?}", result);
-    
+
     assert_eq!(result.exit_code, 0);
     assert!(result.stdout.contains("Hello, World!"));
     assert!(result.stderr.is_empty());
@@ -31,14 +31,15 @@ fn test_execute_recipe_with_parameters() {
 greet name="World":
     echo "Hello, {{ name }}!"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     // Test with custom parameter
-    let result = execute_recipe(&justfile, "greet", &["Rust".to_string()], temp_dir.path()).unwrap();
+    let result =
+        execute_recipe(&justfile, "greet", &["Rust".to_string()], temp_dir.path()).unwrap();
     assert!(result.stdout.contains("Hello, Rust!"));
-    
+
     // Test with default parameter
     let result = execute_recipe(&justfile, "greet", &[], temp_dir.path()).unwrap();
     assert!(result.stdout.contains("Hello, World!"));
@@ -52,12 +53,12 @@ version = "2.0.0"
 show_version:
     echo "Building version {{ version }}"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "show_version", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
     assert!(result.stdout.contains("Building version 2.0.0"));
 }
@@ -74,12 +75,12 @@ build: setup
 test: build
     echo "Testing..."
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "test", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
     // Should contain output from all dependencies
     assert!(result.stdout.contains("Setting up..."));
@@ -94,12 +95,12 @@ quiet_task:
     @echo "This won't appear in output"
     echo "This will appear"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "quiet_task", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
     assert!(!result.stdout.contains("This won't appear"));
     assert!(result.stdout.contains("This will appear"));
@@ -112,12 +113,12 @@ fail:
     false
     echo "This should not run"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "fail", &[], temp_dir.path()).unwrap();
-    
+
     assert_ne!(result.exit_code, 0);
     assert!(!result.stdout.contains("This should not run"));
 }
@@ -128,14 +129,19 @@ fn test_execute_nonexistent_recipe() {
 existing:
     echo "I exist"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "nonexistent", &[], temp_dir.path());
-    
+
     assert!(result.is_err());
-    assert!(result.unwrap_err().to_string().contains("Recipe 'nonexistent' not found"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("Recipe 'nonexistent' not found")
+    );
 }
 
 #[test]
@@ -144,14 +150,19 @@ fn test_execute_recipe_missing_required_parameter() {
 deploy env:
     echo "Deploying to {{ env }}"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "deploy", &[], temp_dir.path());
-    
+
     assert!(result.is_err());
-    assert!(result.unwrap_err().to_string().contains("Missing required parameter"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("Missing required parameter")
+    );
 }
 
 #[test]
@@ -160,14 +171,24 @@ fn test_execute_recipe_too_many_arguments() {
 simple:
     echo "No parameters expected"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
-    let result = execute_recipe(&justfile, "simple", &["unexpected".to_string()], temp_dir.path());
-    
+
+    let result = execute_recipe(
+        &justfile,
+        "simple",
+        &["unexpected".to_string()],
+        temp_dir.path(),
+    );
+
     assert!(result.is_err());
-    assert!(result.unwrap_err().to_string().contains("Expected at most 0 arguments"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("Expected at most 0 arguments")
+    );
 }
 
 #[test]
@@ -176,14 +197,18 @@ fn test_execute_recipe_working_directory() {
 show_pwd:
     pwd
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "show_pwd", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
-    assert!(result.stdout.contains(&temp_dir.path().to_string_lossy().to_string()));
+    assert!(
+        result
+            .stdout
+            .contains(&temp_dir.path().to_string_lossy().to_string())
+    );
 }
 
 #[test]
@@ -194,12 +219,12 @@ multi:
     echo "Second command"
     echo "Third command"
 "#;
-    
+
     let justfile = parse_justfile_str(content).unwrap();
     let temp_dir = TempDir::new().unwrap();
-    
+
     let result = execute_recipe(&justfile, "multi", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
     assert!(result.stdout.contains("First command"));
     assert!(result.stdout.contains("Second command"));

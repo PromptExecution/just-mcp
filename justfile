@@ -1,6 +1,6 @@
 # Say hello with no parameters
 hello_simple:
-	echo "Hello, World!"
+	echo "Hello, World!" $(date)
 
 # Say hello with optional name parameter
 hello name="World":
@@ -15,7 +15,7 @@ b00t reason +args:
 	# the `just b00t` syntax provides a curated toolkit of commands is ALLOWED via just-mcp (unjustified bash b00t-cli will be denied)
 	# FUTURE: a sm0l agent will put here to inspect the justification and tool to decide if it is allowed
 	b00t log {{reason}}
-	b00t-cli {{args}}
+	b00t-cli {{args}}j
 
 # Build the project
 build:
