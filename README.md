@@ -1,8 +1,35 @@
 # just-mcp
 
-**Model Context Protocol (MCP) server for Justfile integration**
+**👋 A way to let LLMs speak Just**
 
 A production-ready MCP server that provides seamless integration with [Just](https://github.com/casey/just) command runner, enabling AI assistants to discover, execute, and introspect Justfile recipes through the standardized MCP protocol.
+
+## 🎯 **Why Just + MCP = Better Agent Execution**
+
+### **Context-Saving Abstraction**
+If it isn't immediately obvious, the benefit of having LLMs use Just vs. bash is that running Just commands (via MCP) provides a context-saving abstraction where they don't need to waste context opening/reading bash files, Python scripts, or other build artifacts. The LLM via MCP simply gets the command, parameters, and hints - it's in their memory as "these are commands available to you."
+
+### **Eliminates the Justfile Learning Curve**
+No more watching LLMs execute `just -l` to get command lists, inevitably start reading the justfile, then try to write justfile syntax (like it's a Makefile), corrupt the justfile, and create a bad experience. Just's evolving syntax simply doesn't have a large enough corpus in frontier models today - we need more popular repos with justfiles in the training dataset.
+
+### **Safer Than Raw Bash Access**
+Just-mcp is fundamentally safer than bash. If you read HackerNews, there's a story at least once daily about operators whose LLMs start forgetting, hallucinating, and eventually breaking down - deleting files and doing nasty unwanted things. Giving LLMs unsupervised, unrestricted bash access without carefully monitoring context consumption is a recipe for disaster.
+
+**Using Justfile fixes that.** Even if the LLM modifies its own bash script, the next context is memoized by the justfile (hopefully in an idempotent git repo).
+
+### **Powerful Agent Execution Tool**
+Just-mcp is perfect for anybody doing agent execution:
+- **Ultra-low overhead** - probably better than every other tool
+- **Human-friendly** - justfiles are easy for humans and low overhead for LLMs  
+- **Quick and dirty** - while some prefer full Python FastAPI servers, just-mcp is just easy-as
+- **sm0l model friendly** - works great with self-hostable GPU/CPU open source models with 8k-32k context limits
+
+### **Built-in Safety Patterns**
+Just has useful patterns for introducing:
+- **Transparent logging** without distracting the agent
+- **Secondary model inspection** - use sm0l models to scan commands asking "is this harmful?" before execution
+- **Python decorator-like patterns** for command validation
+- **Idempotent execution** backed by git repos
 
 ## b00t
 ```
@@ -215,3 +242,8 @@ wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-m
 - [Just](https://github.com/casey/just) - The command runner this integrates with
 - [Model Context Protocol](https://modelcontextprotocol.io/) - The protocol specification
 - [rmcp](https://github.com/modelcontextprotocol/rust-sdk) - Official Rust MCP SDK
+
+### **Friends of just-mcp**
+
+- [just-vscode](https://github.com/promptexecution/just-vscode) - VSCode extension with LSP integration for enhanced Just authoring
+- [just-awesome-agents](https://github.com/promptexecution/just-awesome-agents) - Collection of patterns and tools for agent execution with Just
