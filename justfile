@@ -25,6 +25,14 @@ build:
 test:
 	cargo test
 
+# Run only library tests (known working)
+test-lib:
+	cargo test -p just-mcp-lib
+
+# Run all tests including integration tests (some may fail)
+test-all:
+	cargo test
+
 # Run the MCP server with stdio transport
 server:
 	cargo run -- --stdio
