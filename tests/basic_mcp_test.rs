@@ -33,7 +33,7 @@ the Model Context Protocol at the wire format level using raw JSON-RPC over stdi
 
 use std::io::Write;
 use std::process::{Command, Stdio};
-use tokio::time::{Duration, timeout};
+use tokio::time::Duration;
 
 #[tokio::test]
 async fn test_mcp_server_basic() {

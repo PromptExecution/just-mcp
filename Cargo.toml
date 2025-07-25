@@ -5,6 +5,31 @@ members = ["just-mcp-lib"]
 name = "just-mcp"
 version = "0.1.0"
 edition = "2024"
+authors = ["Brian Horakh <brian@promptexecution.com>"]
+description = "Production-ready MCP (Model Context Protocol) server for Justfile integration"
+documentation = "https://docs.rs/just-mcp"
+homepage = "https://github.com/promptexecution/just-mcp"
+repository = "https://github.com/promptexecution/just-mcp"
+license = "MIT"
+keywords = ["mcp", "justfile", "build-tool", "automation", "llm"]
+categories = ["command-line-utilities", "development-tools", "development-tools::build-utils"]
+readme = "README.md"
+exclude = [
+    ".git*",
+    ".cursor/",
+    ".roo/", 
+    ".taskmaster/",
+    "logs/",
+    "cache/",
+    "integration_test/",
+    "test-fixtures/",
+    "TODO.pm",
+    ".windsurfrules",
+    ".roomodes",
+    ".rooignore",
+    "RMCP_SYNTAX_FIXES.md",
+    "AGENTS.md"
+]
 
 [[bin]]
 name = "just-mcp"

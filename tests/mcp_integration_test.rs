@@ -36,7 +36,7 @@ use rmcp::{
     model::CallToolRequestParam,
     transport::{ConfigureCommandExt, TokioChildProcess},
 };
-use serde_json::{Map, Value, json};
+use serde_json::{Map, Value};
 use std::borrow::Cow;
 use tokio::time::{Duration, timeout};
 
@@ -79,63 +79,114 @@ async fn test_mcp_server_integration() {
 
     assert!(!list_result.content.is_empty());
     // Should contain our hello and write_file recipes
-    let content_str = list_result.content[0].text.as_ref().unwrap();
-    assert!(content_str.contains("hello"));
-    assert!(content_str.contains("write_file"));
+    let content_str = match &list_result.content[0].raw {
+        rmcp::model::RawContent::Text(text) => text,
+        _ => panic!("Expected text content"),
+    };
+    assert!(content_str.text.contains("hello"));
+    assert!(content_str.text.contains("write_file"));
 
     // Test calling hello recipe with default parameter
     let hello_result = timeout(
         Duration::from_secs(10),
         client.peer().call_tool(CallToolRequestParam {
-            name: "run_recipe".to_string(),
-            arguments: Some(json!({
-                "recipe": "hello"
-            })),
+            name: Cow::Borrowed("run_recipe"),
+            arguments: Some({
+                let mut map = Map::new();
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello".to_string()),
+                );
+                map
+            }),
         }),
     )
     .await
     .expect("Hello recipe timed out")
     .expect("Failed to call hello recipe");
 
-    let content_str = hello_result.content[0].text.as_ref().unwrap();
-    assert!(content_str.contains("Hello, World!"));
+    let content_str = match &hello_result.content[0].raw {
+        rmcp::model::RawContent::Text(text) => text,
+        _ => panic!("Expected text content"),
+    };
+    let result_json: serde_json::Value =
+        serde_json::from_str(&content_str.text).expect("Failed to parse result JSON");
+    let stdout = result_json["stdout"]
+        .as_str()
+        .expect("Expected stdout field");
+    assert!(stdout.contains("Hello, World!"));
 
     // Test calling hello recipe with custom parameter
     let hello_custom_result = timeout(
         Duration::from_secs(10),
         client.peer().call_tool(CallToolRequestParam {
-            name: "run_recipe".to_string(),
-            arguments: Some(json!({
-                "recipe": "hello",
-                "args": ["Claude"]
-            })),
+            name: Cow::Borrowed("run_recipe"),
+            arguments: Some({
+                let mut map = Map::new();
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello".to_string()),
+                );
+                map.insert(
+                    "args".to_string(),
+                    Value::Array(vec![Value::String("Claude".to_string())]),
+                );
+                map
+            }),
         }),
     )
     .await
     .expect("Hello custom recipe timed out")
     .expect("Failed to call hello recipe with custom name");
 
-    let content_str = hello_custom_result.content[0].text.as_ref().unwrap();
-    assert!(content_str.contains("Hello, Claude!"));
+    let content_str = match &hello_custom_result.content[0].raw {
+        rmcp::model::RawContent::Text(text) => text,
+        _ => panic!("Expected text content"),
+    };
+    let result_json: serde_json::Value =
+        serde_json::from_str(&content_str.text).expect("Failed to parse result JSON");
+    let stdout = result_json["stdout"]
+        .as_str()
+        .expect("Expected stdout field");
+    assert!(stdout.contains("Hello, Claude!"));
 
     // Test write_file recipe
     let write_result = timeout(
         Duration::from_secs(10),
         client.peer().call_tool(CallToolRequestParam {
-            name: "run_recipe".to_string(),
-            arguments: Some(json!({
-                "recipe": "write_file",
-                "args": ["test_output.txt", "Hello from MCP integration test!"]
-            })),
+            name: Cow::Borrowed("run_recipe"),
+            arguments: Some({
+                let mut map = Map::new();
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("write_file".to_string()),
+                );
+                map.insert(
+                    "args".to_string(),
+                    Value::Array(vec![
+                        Value::String("test_output.txt".to_string()),
+                        Value::String("Hello from MCP integration test!".to_string())
+                    ]),
+                );
+                map
+            }),
         }),
     )
     .await
     .expect("Write file recipe timed out")
     .expect("Failed to call write_file recipe");
 
-    let content_str = write_result.content[0].text.as_ref().unwrap();
-    assert!(content_str.contains("Written"));
-    assert!(content_str.contains("test_output.txt"));
+    let content_str = match &write_result.content[0].raw {
+        rmcp::model::RawContent::Text(text) => text,
+        _ => panic!("Expected text content"),
+    };
+    let result_json: serde_json::Value =
+        serde_json::from_str(&content_str.text).expect("Failed to parse result JSON");
+    let stdout = result_json["stdout"]
+        .as_str()
+        .expect("Expected stdout field");
+    assert!(stdout.contains("Written"));
+    assert!(stdout.contains("test_output.txt"));
 
     // Cleanup
     client.cancel().await.expect("Failed to cancel client");
@@ -156,21 +207,29 @@ async fn test_get_recipe_info() {
     let info_result = timeout(
         Duration::from_secs(10),
         client.peer().call_tool(CallToolRequestParam {
-            name: "get_recipe_info".to_string(),
-            arguments: Some(json!({
-                "recipe": "hello"
-            })),
+            name: Cow::Borrowed("get_recipe_info"),
+            arguments: Some({
+                let mut map = Map::new();
+                map.insert(
+                    "recipe_name".to_string(),
+                    Value::String("hello".to_string()),
+                );
+                map
+            }),
         }),
     )
     .await
     .expect("Get recipe info timed out")
     .expect("Failed to get recipe info");
 
-    let content_str = info_result.content[0].text.as_ref().unwrap();
-    assert!(content_str.contains("hello"));
-    assert!(content_str.contains("name"));
+    let content_str = match &info_result.content[0].raw {
+        rmcp::model::RawContent::Text(text) => text,
+        _ => panic!("Expected text content"),
+    };
+    assert!(content_str.text.contains("hello"));
+    assert!(content_str.text.contains("name"));
     // Should contain parameter information
-    assert!(content_str.contains("parameter") || content_str.contains("param"));
+    assert!(content_str.text.contains("parameter") || content_str.text.contains("param"));
 
     // Cleanup
     client.cancel().await.expect("Failed to cancel client");

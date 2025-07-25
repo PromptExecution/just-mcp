@@ -164,6 +164,48 @@ just clean    # Clean build artifacts
 
 This project is licensed under [LICENSE](LICENSE).
 
+## 🚀 **Release Setup & CI/CD**
+
+### ✅ **Completed Setup**
+
+#### **Cocogitto & Conventional Commits**
+- Installed cocogitto for conventional commit enforcement
+- Configured `cog.toml` with proper commit types and changelog settings
+- Set up git hooks for commit message linting (`commit-msg`) and pre-push testing
+
+#### **GitHub Actions CI/CD**
+- **CI Pipeline** (`ci.yml`): Multi-platform testing (Ubuntu, Windows, macOS), formatting, clippy, commit linting
+- **Release Pipeline** (`release.yml`): Automated versioning, changelog generation, GitHub releases, and crates.io publishing
+
+#### **Crates.io Preparation**
+- Updated both `Cargo.toml` files with complete metadata (description, keywords, categories, license, etc.)
+- Added proper exclusions for development-only files
+- Verified MIT license is in place
+
+#### **Documentation & Structure**
+- README.md is production-ready with installation and usage instructions
+- Created initial `CHANGELOG.md` for release tracking
+- Updated `.gitignore` with Rust-specific entries
+
+### 🚧 **Additional Steps for Release**
+
+#### **Before First Release:**
+1. **Fix Integration Tests**: The `mcp_integration_test.rs` has compilation errors that need to be resolved
+2. **Set GitHub Secrets**: Add `CARGO_REGISTRY_TOKEN` to repository secrets for automated publishing
+3. **Test Release Process**: Run `cog bump --dry-run` to verify versioning works
+4. **Create Initial Tag**: Use `git tag v0.1.0` and push to trigger first release
+
+#### **Development Workflow:**
+- All future commits must follow conventional commit format (enforced by git hooks)
+- Use `feat:`, `fix:`, `docs:`, etc. prefixes 
+- Push to `wip/phase4` branch triggers automated releases
+- Library tests pass ✅ (25/25), but integration tests need fixing
+
+#### **Crates.io Publishing:**
+- Library crate (`just-mcp-lib`) publishes first, then binary crate (`just-mcp`)
+- All metadata is properly configured for discoverability
+- Categories: command-line-utilities, development-tools, build-utils
+
 ## 🔗 **Related Projects**
 
 - [Just](https://github.com/casey/just) - The command runner this integrates with

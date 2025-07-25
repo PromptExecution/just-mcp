@@ -34,3 +34,16 @@ tasks/
 target/*
 *~
 cache/*
+
+# Rust specific
+Cargo.lock
+.cargo/
+**/*.rs.bk
+
+# Test outputs
+test_output.txt
+
+# IDE specific
+.cursor/
+.vscode/
+.idea/

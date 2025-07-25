@@ -1,21 +1,34 @@
 from_latest_tag = false
-ignore_merge_commits = false
+ignore_merge_commits = true
 ignore_fixup_commits = true
 disable_changelog = false
 disable_bump_commit = false
-generate_mono_repository_global_tag = true
-generate_mono_repository_package_tags = true
-branch_whitelist = []
+generate_mono_repository_global_tag = false
+generate_mono_repository_package_tags = false
+branch_whitelist = ["main"]
 skip_ci = "[skip ci]"
 skip_untracked = false
-pre_bump_hooks = []
-post_bump_hooks = []
+pre_bump_hooks = ["cargo test -p just-mcp-lib", "cargo check --all-targets --all-features"]
+post_bump_hooks = ["cargo update", "git add Cargo.lock"]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
+tag_prefix = "v"
 
 [git_hooks]
 
 [commit_types]
+feat = { changelog_title = "Features", bump = "minor" }
+fix = { changelog_title = "Bug Fixes", bump = "patch" }
+docs = { changelog_title = "Documentation", bump = "patch" }
+style = { changelog_title = "Styling", bump = "patch" }
+refactor = { changelog_title = "Refactoring", bump = "patch" }
+perf = { changelog_title = "Performance", bump = "patch" }
+test = { changelog_title = "Testing", bump = "patch" }
+chore = { changelog_title = "Miscellaneous", bump = "patch" }
+ci = { changelog_title = "Continuous Integration", bump = "patch" }
+build = { changelog_title = "Build System", bump = "patch" }
+revert = { changelog_title = "Reverts", bump = "patch" }
+breaking = { changelog_title = "Breaking Changes", bump = "major" }
 
 [changelog]
 path = "CHANGELOG.md"
