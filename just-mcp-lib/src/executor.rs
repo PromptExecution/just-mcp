@@ -185,7 +185,7 @@ fn substitute_parameters(
         // Try both with and without spaces
         let pattern_with_spaces = format!("{{{{ {name} }}}}");
         let pattern_without_spaces = format!("{{{{{name}}}}}");
-        
+
         result = result.replace(&pattern_with_spaces, value);
         result = result.replace(&pattern_without_spaces, value);
     }
@@ -195,7 +195,7 @@ fn substitute_parameters(
         // Try both with and without spaces
         let pattern_with_spaces = format!("{{{{ {name} }}}}");
         let pattern_without_spaces = format!("{{{{{name}}}}}");
-        
+
         // Remove quotes from variable values for substitution
         let clean_value = value.trim_matches('"').trim_matches('\'');
         result = result.replace(&pattern_with_spaces, clean_value);

@@ -100,9 +100,8 @@ fn parse_recipe_header(header: &str) -> Result<Vec<String>> {
     let mut current_part = String::new();
     let mut in_quotes = false;
     let mut quote_char = '\0';
-    let mut chars = header.chars().peekable();
 
-    while let Some(ch) = chars.next() {
+    for ch in header.chars() {
         match ch {
             '"' | '\'' if !in_quotes => {
                 in_quotes = true;
@@ -314,10 +313,10 @@ write_file filename content="Hello from just-mcp!":
         let recipe = &justfile.recipes[0];
         assert_eq!(recipe.name, "write_file");
         assert_eq!(recipe.parameters.len(), 2);
-        
+
         assert_eq!(recipe.parameters[0].name, "filename");
         assert_eq!(recipe.parameters[0].default_value, None);
-        
+
         assert_eq!(recipe.parameters[1].name, "content");
         assert_eq!(
             recipe.parameters[1].default_value,

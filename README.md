@@ -251,4 +251,4 @@ wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-m
 ### **Friends of just-mcp**
 
 - [just-vscode](https://github.com/promptexecution/just-vscode) - VSCode extension with LSP integration for enhanced Just authoring
-- [just-awesome-agents](https://github.com/promptexecution/just-awesome-agents) - Collection of patterns and tools for agent execution with Just
+- [just-awesome-agents](https://github.com/promptexecution/just-awesome-agents) - Collection of patterns and tools for agent execution with Just# Test change to trigger pre-push hook

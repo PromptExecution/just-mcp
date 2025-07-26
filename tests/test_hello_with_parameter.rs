@@ -13,14 +13,15 @@ hello name="World":
     let temp_dir = TempDir::new().unwrap();
 
     // Test with custom parameter
-    let result = execute_recipe(&justfile, "hello", &["Claude".to_string()], temp_dir.path()).unwrap();
-    
+    let result =
+        execute_recipe(&justfile, "hello", &["Claude".to_string()], temp_dir.path()).unwrap();
+
     assert_eq!(result.exit_code, 0);
     // Since this uses @ prefix, there won't be stdout in the result
     // But the execution should succeed without parameter substitution errors
-    
+
     // Test with default parameter (no args)
     let result = execute_recipe(&justfile, "hello", &[], temp_dir.path()).unwrap();
-    
+
     assert_eq!(result.exit_code, 0);
 }
