@@ -95,6 +95,45 @@ pub fn parse_justfile_str(content: &str) -> Result<Justfile> {
     Ok(Justfile { recipes, variables })
 }
 
+fn parse_recipe_header(header: &str) -> Result<Vec<String>> {
+    let mut parts = Vec::new();
+    let mut current_part = String::new();
+    let mut in_quotes = false;
+    let mut quote_char = '\0';
+    let mut chars = header.chars().peekable();
+
+    while let Some(ch) = chars.next() {
+        match ch {
+            '"' | '\'' if !in_quotes => {
+                in_quotes = true;
+                quote_char = ch;
+                current_part.push(ch);
+            }
+            c if c == quote_char && in_quotes => {
+                in_quotes = false;
+                current_part.push(ch);
+                quote_char = '\0';
+            }
+            ' ' if !in_quotes => {
+                if !current_part.is_empty() {
+                    parts.push(current_part.trim().to_string());
+                    current_part.clear();
+                }
+            }
+            _ => {
+                current_part.push(ch);
+            }
+        }
+    }
+
+    // Add the last part if not empty
+    if !current_part.is_empty() {
+        parts.push(current_part.trim().to_string());
+    }
+
+    Ok(parts)
+}
+
 fn parse_variable_assignment(line: &str) -> Option<(String, String)> {
     if let Some((key, value)) = line.split_once('=') {
         let key = key.trim();
@@ -115,7 +154,7 @@ fn parse_recipe_line(line: &str, documentation: Option<String>) -> Result<Option
         let deps_part = deps_part[1..].trim(); // Remove the ':'
 
         let header = header.trim();
-        let parts: Vec<&str> = header.split_whitespace().collect();
+        let parts = parse_recipe_header(header)?;
 
         if parts.is_empty() {
             return Ok(None);
@@ -260,5 +299,29 @@ build:
             Some(&"\"1.0.0\"".to_string())
         );
         assert_eq!(justfile.variables.get("debug"), Some(&"true".to_string()));
+    }
+
+    #[test]
+    fn test_parse_recipe_with_quoted_parameters() {
+        let content = r#"
+write_file filename content="Hello from just-mcp!":
+    @echo "{{content}}" > {{filename}}
+"#;
+
+        let justfile = parse_justfile_str(content).unwrap();
+        assert_eq!(justfile.recipes.len(), 1);
+
+        let recipe = &justfile.recipes[0];
+        assert_eq!(recipe.name, "write_file");
+        assert_eq!(recipe.parameters.len(), 2);
+        
+        assert_eq!(recipe.parameters[0].name, "filename");
+        assert_eq!(recipe.parameters[0].default_value, None);
+        
+        assert_eq!(recipe.parameters[1].name, "content");
+        assert_eq!(
+            recipe.parameters[1].default_value,
+            Some("Hello from just-mcp!".to_string())
+        );
     }
 }

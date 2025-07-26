@@ -4,12 +4,12 @@ hello_simple:
 
 # Say hello with optional name parameter
 hello name="World":
-	@echo "Hello, {{name}}!"
+	echo "Hello, {{name}}!"
 
 # Write content to a specified file
 write_file filename content="Hello from just-mcp!":
 	@echo "{{content}}" > {{filename}}
-	@echo "Written '{{content}}' to {{filename}}"
+	echo "Written '{{content}}' to {{filename}}"
 
 b00t reason +args:
 	# the `just b00t` syntax provides a curated toolkit of commands is ALLOWED via just-mcp (unjustified bash b00t-cli will be denied)

@@ -180,18 +180,26 @@ fn substitute_parameters(
 ) -> Result<String> {
     let mut result = body.to_string();
 
-    // Substitute recipe parameters ({{ param_name }})
+    // Substitute recipe parameters (both {{ param_name }} and {{param_name}} formats)
     for (name, value) in param_values {
-        let pattern = format!("{{{{ {name} }}}}");
-        result = result.replace(&pattern, value);
+        // Try both with and without spaces
+        let pattern_with_spaces = format!("{{{{ {name} }}}}");
+        let pattern_without_spaces = format!("{{{{{name}}}}}");
+        
+        result = result.replace(&pattern_with_spaces, value);
+        result = result.replace(&pattern_without_spaces, value);
     }
 
-    // Substitute global variables ({{ var_name }})
+    // Substitute global variables (both {{ var_name }} and {{var_name}} formats)
     for (name, value) in variables {
-        let pattern = format!("{{{{ {name} }}}}");
+        // Try both with and without spaces
+        let pattern_with_spaces = format!("{{{{ {name} }}}}");
+        let pattern_without_spaces = format!("{{{{{name}}}}}");
+        
         // Remove quotes from variable values for substitution
         let clean_value = value.trim_matches('"').trim_matches('\'');
-        result = result.replace(&pattern, clean_value);
+        result = result.replace(&pattern_with_spaces, clean_value);
+        result = result.replace(&pattern_without_spaces, clean_value);
     }
 
     // Check for any remaining unsubstituted variables
