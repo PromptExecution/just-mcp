@@ -96,6 +96,12 @@ async fn test_mcp_server_basic() {
     println!("Server stderr: {}", String::from_utf8_lossy(&output.stderr));
 
     // As long as server didn't crash immediately, consider it a success
-    // (In a real scenario we'd parse the JSON responses)
-    assert!(output.status.success() || output.status.code() == Some(143)); // 143 = SIGTERM
+    // The server responded with valid JSON, so it's working correctly
+    // Check that we got valid MCP responses in stdout
+    let stdout_str = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout_str.contains("jsonrpc") && stdout_str.contains("result"),
+        "Server should respond with valid JSON-RPC messages, got: {}",
+        stdout_str
+    );
 }

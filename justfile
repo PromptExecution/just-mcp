@@ -15,7 +15,7 @@ b00t reason +args:
 	# the `just b00t` syntax provides a curated toolkit of commands is ALLOWED via just-mcp (unjustified bash b00t-cli will be denied)
 	# FUTURE: a sm0l agent will put here to inspect the justification and tool to decide if it is allowed
 	b00t log {{reason}}
-	b00t-cli {{args}}j
+	b00t-cli {{args}}
 
 # Build the project
 build:
