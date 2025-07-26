@@ -37,7 +37,17 @@ use tokio::time::Duration;
 
 #[tokio::test]
 async fn test_mcp_server_basic() {
-    // Start our MCP server process
+    // First, ensure the binary is built
+    let build_output = Command::new("cargo")
+        .args(["build"])
+        .output()
+        .expect("Failed to build project");
+    
+    if !build_output.status.success() {
+        panic!("Failed to build project: {}", String::from_utf8_lossy(&build_output.stderr));
+    }
+
+    // Start our MCP server process using the built binary
     let mut server = Command::new("cargo")
         .args(["run", "--", "--stdio"])
         .stdin(Stdio::piped())
@@ -64,6 +74,7 @@ async fn test_mcp_server_basic() {
     });
 
     writeln!(stdin, "{init_request}").expect("Failed to write to stdin");
+    stdin.flush().expect("Failed to flush stdin");
 
     // Send initialized notification
     let initialized = serde_json::json!({
@@ -73,6 +84,7 @@ async fn test_mcp_server_basic() {
     });
 
     writeln!(stdin, "{initialized}").expect("Failed to write initialized");
+    stdin.flush().expect("Failed to flush stdin");
 
     // Send list tools request
     let list_tools = serde_json::json!({
@@ -83,9 +95,10 @@ async fn test_mcp_server_basic() {
     });
 
     writeln!(stdin, "{list_tools}").expect("Failed to write list tools");
+    stdin.flush().expect("Failed to flush stdin");
 
-    // Give server time to respond and then terminate
-    tokio::time::sleep(Duration::from_millis(1000)).await;
+    // Give server more time to respond and then terminate
+    tokio::time::sleep(Duration::from_millis(2000)).await;
 
     // Kill the server
     server.kill().expect("Failed to kill server");
