@@ -159,7 +159,9 @@ async fn test_mcp_server_integration() {
                 );
                 map.insert(
                     "args".to_string(),
-                    Value::String(r#"["test_output.txt", "Hello from MCP integration test!"]"#.to_string()),
+                    Value::String(
+                        r#"["test_output.txt", "Hello from MCP integration test!"]"#.to_string(),
+                    ),
                 );
                 map
             }),
