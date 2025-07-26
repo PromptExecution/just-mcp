@@ -248,13 +248,12 @@ fn execute_commands(body: &str, working_dir: &Path, recipe_name: &str) -> Result
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
 
-        if !stdout.is_empty()
-            && !quiet {
-                if !combined_stdout.is_empty() {
-                    combined_stdout.push('\n');
-                }
-                combined_stdout.push_str(&stdout);
+        if !stdout.is_empty() && !quiet {
+            if !combined_stdout.is_empty() {
+                combined_stdout.push('\n');
             }
+            combined_stdout.push_str(&stdout);
+        }
 
         if !stderr.is_empty() {
             if !combined_stderr.is_empty() {
