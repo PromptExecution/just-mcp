@@ -42,9 +42,12 @@ async fn test_mcp_server_basic() {
         .args(["build"])
         .output()
         .expect("Failed to build project");
-    
+
     if !build_output.status.success() {
-        panic!("Failed to build project: {}", String::from_utf8_lossy(&build_output.stderr));
+        panic!(
+            "Failed to build project: {}",
+            String::from_utf8_lossy(&build_output.stderr)
+        );
     }
 
     // Start our MCP server process using the built binary
