@@ -63,7 +63,7 @@ async fn test_mcp_server_basic() {
         }
     });
 
-    writeln!(stdin, "{}", init_request).expect("Failed to write to stdin");
+    writeln!(stdin, "{init_request}").expect("Failed to write to stdin");
 
     // Send initialized notification
     let initialized = serde_json::json!({
@@ -72,7 +72,7 @@ async fn test_mcp_server_basic() {
         "params": {}
     });
 
-    writeln!(stdin, "{}", initialized).expect("Failed to write initialized");
+    writeln!(stdin, "{initialized}").expect("Failed to write initialized");
 
     // Send list tools request
     let list_tools = serde_json::json!({
@@ -82,7 +82,7 @@ async fn test_mcp_server_basic() {
         "params": {}
     });
 
-    writeln!(stdin, "{}", list_tools).expect("Failed to write list tools");
+    writeln!(stdin, "{list_tools}").expect("Failed to write list tools");
 
     // Give server time to respond and then terminate
     tokio::time::sleep(Duration::from_millis(1000)).await;
@@ -101,7 +101,6 @@ async fn test_mcp_server_basic() {
     let stdout_str = String::from_utf8_lossy(&output.stdout);
     assert!(
         stdout_str.contains("jsonrpc") && stdout_str.contains("result"),
-        "Server should respond with valid JSON-RPC messages, got: {}",
-        stdout_str
+        "Server should respond with valid JSON-RPC messages, got: {stdout_str}"
     );
 }

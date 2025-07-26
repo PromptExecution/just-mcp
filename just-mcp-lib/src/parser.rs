@@ -32,10 +32,8 @@ pub fn parse_justfile_str(content: &str) -> Result<Justfile> {
     let mut variables = HashMap::new();
     let mut current_recipe: Option<Recipe> = None;
     let mut current_doc: Option<String> = None;
-    let mut line_number = 0;
-
-    for line in content.lines() {
-        line_number += 1;
+    for (line_number, line) in content.lines().enumerate() {
+        let line_number = line_number + 1;
         let trimmed = line.trim();
 
         // Skip empty lines
@@ -44,8 +42,8 @@ pub fn parse_justfile_str(content: &str) -> Result<Justfile> {
         }
 
         // Handle comments and documentation
-        if trimmed.starts_with('#') {
-            let comment = trimmed[1..].trim();
+        if let Some(stripped) = trimmed.strip_prefix('#') {
+            let comment = stripped.trim();
             if !comment.is_empty() {
                 current_doc = Some(comment.to_string());
             }
@@ -84,7 +82,7 @@ pub fn parse_justfile_str(content: &str) -> Result<Justfile> {
         if !trimmed.is_empty() {
             return Err(ParserError::ParseError {
                 line: line_number,
-                message: format!("Unexpected content: {}", trimmed),
+                message: format!("Unexpected content: {trimmed}"),
             });
         }
     }
@@ -169,8 +167,8 @@ fn parse_parameter(param_str: &str) -> Result<Parameter> {
         let name = param_str.trim();
 
         // Handle variadic parameters (prefixed with *)
-        let name = if name.starts_with('*') {
-            &name[1..]
+        let name = if let Some(stripped) = name.strip_prefix('*') {
+            stripped
         } else {
             name
         };

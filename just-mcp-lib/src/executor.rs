@@ -182,13 +182,13 @@ fn substitute_parameters(
 
     // Substitute recipe parameters ({{ param_name }})
     for (name, value) in param_values {
-        let pattern = format!("{{{{ {} }}}}", name);
+        let pattern = format!("{{{{ {name} }}}}");
         result = result.replace(&pattern, value);
     }
 
     // Substitute global variables ({{ var_name }})
     for (name, value) in variables {
-        let pattern = format!("{{{{ {} }}}}", name);
+        let pattern = format!("{{{{ {name} }}}}");
         // Remove quotes from variable values for substitution
         let clean_value = value.trim_matches('"').trim_matches('\'');
         result = result.replace(&pattern, clean_value);
@@ -217,17 +217,17 @@ fn execute_commands(body: &str, working_dir: &Path, recipe_name: &str) -> Result
         }
 
         // Remove leading tabs/spaces from command
-        let command_line = if line.starts_with('\t') {
-            &line[1..]
-        } else if line.starts_with("    ") {
-            &line[4..]
+        let command_line = if let Some(stripped) = line.strip_prefix('\t') {
+            stripped
+        } else if let Some(stripped) = line.strip_prefix("    ") {
+            stripped
         } else {
             line
         };
 
         // Handle special prefixes
-        let (quiet, command_line) = if command_line.starts_with('@') {
-            (true, &command_line[1..])
+        let (quiet, command_line) = if let Some(stripped) = command_line.strip_prefix('@') {
+            (true, stripped)
         } else {
             (false, command_line)
         };
@@ -248,14 +248,13 @@ fn execute_commands(body: &str, working_dir: &Path, recipe_name: &str) -> Result
         let stdout = String::from_utf8_lossy(&output.stdout);
         let stderr = String::from_utf8_lossy(&output.stderr);
 
-        if !stdout.is_empty() {
-            if !quiet {
+        if !stdout.is_empty()
+            && !quiet {
                 if !combined_stdout.is_empty() {
                     combined_stdout.push('\n');
                 }
                 combined_stdout.push_str(&stdout);
             }
-        }
 
         if !stderr.is_empty() {
             if !combined_stderr.is_empty() {

@@ -162,7 +162,7 @@ impl McpEnvironment {
             .map(|s| match s {
                 EnvironmentSource::ProcessEnv => "ProcessEnv".to_string(),
                 EnvironmentSource::EnvFile(path) => format!("EnvFile({})", path.display()),
-                EnvironmentSource::ServerConfig(name) => format!("ServerConfig({})", name),
+                EnvironmentSource::ServerConfig(name) => format!("ServerConfig({name})"),
                 EnvironmentSource::Custom(_) => "Custom".to_string(),
             })
             .collect();

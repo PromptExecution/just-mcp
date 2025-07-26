@@ -125,7 +125,7 @@ pub fn format_signature_help(help: &SignatureHelp) -> String {
 
     // Documentation
     if let Some(ref doc) = help.documentation {
-        result.push_str(&format!("\n\n{}", doc));
+        result.push_str(&format!("\n\n{doc}"));
     }
 
     // Parameter details
@@ -145,10 +145,10 @@ pub fn format_signature_help(help: &SignatureHelp) -> String {
                     Some(val) => val,
                     None => "none",
                 };
-                result.push_str(&format!(" (optional, default: {})", default_display));
+                result.push_str(&format!(" (optional, default: {default_display})"));
             }
             if let Some(ref desc) = param.description {
-                result.push_str(&format!(" - {}", desc));
+                result.push_str(&format!(" - {desc}"));
             }
         }
     }

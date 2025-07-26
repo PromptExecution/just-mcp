@@ -3,7 +3,6 @@ use just_mcp_lib::mcp_server::JustMcpServer;
 use rmcp::{ServiceExt, transport::stdio};
 use std::error::Error;
 use std::path::Path;
-use tokio;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
