@@ -36,7 +36,7 @@ jobs:
         uses: extractions/setup-just@v1
 
       - name: Install cocogitto
-        run: cargo install cocogitto
+        uses: cocogitto/cocogitto-action@v3
 
       - name: Cache cargo registry
         uses: actions/cache@v4
