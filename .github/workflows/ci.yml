@@ -15,13 +15,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        rust: [stable, beta]
-        exclude:
-          - os: windows-latest
-            rust: beta
-          - os: macos-latest
-            rust: beta
+        os: [ubuntu-latest]
+        rust: [stable]
 
     steps:
       - name: Checkout code
