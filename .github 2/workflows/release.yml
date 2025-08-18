@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+# Permissions needed for the release workflow
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  repository-projects: write
+
+jobs:
+  release:
+    # Only run if CI workflow completed successfully and on main branch push (not PR)
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install just
+        uses: extractions/setup-just@v1
+
+      - name: Install cocogitto
+        uses: cocogitto/cocogitto-action@v3
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Setup git config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if there are releasable changes
+        id: check_changes
+        run: |
+          if cog check --from-latest-tag; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Create release
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Generate changelog and bump version
+          cog bump --auto
+          
+          # Get the new version
+          NEW_VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
+          
+          # Generate changelog for the release
+          cog changelog --at "v${NEW_VERSION}" > RELEASE_NOTES.md
+          
+          # Create GitHub release
+          gh release create "v${NEW_VERSION}" \
+            --title "Release v${NEW_VERSION}" \
+            --notes-file RELEASE_NOTES.md \
+            --draft=false \
+            --prerelease=false
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest changes from release
+        run: |
+          git pull origin main
+          git fetch --tags
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install just
+        uses: extractions/setup-just@v1
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Publish to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          # Check if we have a cargo registry token
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo "CARGO_REGISTRY_TOKEN is not set, skipping crates.io publication"
+            exit 0
+          fi
+          
+          # Publish library first
+          cd just-mcp-lib
+          cargo publish --token ${CARGO_REGISTRY_TOKEN} || echo "Library publish failed or already published"
+          
+          # Wait a bit for the library to be available
+          sleep 30
+          
+          # Publish binary crate
+          cd ..
+          cargo publish --token ${CARGO_REGISTRY_TOKEN} || echo "Binary crate publish failed or already published"
