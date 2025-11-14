@@ -1,0 +1,50 @@
+{
+  "name": "just-mcp",
+  "version": "0.1.0",
+  "description": "Production-ready MCP (Model Context Protocol) server for Justfile integration",
+  "main": "index.js",
+  "bin": {
+    "just-mcp": "./bin/just-mcp"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "keywords": [
+    "mcp",
+    "justfile",
+    "just",
+    "build-tool",
+    "automation",
+    "llm",
+    "ai",
+    "model-context-protocol"
+  ],
+  "author": "Brian Horakh <brian@promptexecution.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/promptexecution/just-mcp.git"
+  },
+  "homepage": "https://github.com/promptexecution/just-mcp",
+  "bugs": {
+    "url": "https://github.com/promptexecution/just-mcp/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "install.js",
+    "README.md"
+  ],
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}
