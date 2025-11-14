@@ -22,7 +22,8 @@ RUN case "${TARGETARCH}" in \
     arm64) echo "aarch64-unknown-linux-musl" > /tmp/rust-target ;; \
     *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
     esac && \
-    rustup target add $(cat /tmp/rust-target)
+    RUST_TARGET=$(cat /tmp/rust-target) && \
+    rustup target add "${RUST_TARGET}"
 
 # Set working directory
 WORKDIR /build
@@ -38,7 +39,7 @@ RUN mkdir -p src just-mcp-lib/src && \
 
 # Build dependencies only (cached layer)
 RUN RUST_TARGET=$(cat /tmp/rust-target) && \
-    cargo build --release --target ${RUST_TARGET}
+    cargo build --release --target "${RUST_TARGET}"
 
 # Remove dummy files and copy actual source code
 RUN rm -rf src just-mcp-lib/src
@@ -49,8 +50,8 @@ COPY just-mcp-lib/src ./just-mcp-lib/src
 # Using RUSTFLAGS to ensure fully static linking
 RUN RUST_TARGET=$(cat /tmp/rust-target) && \
     RUSTFLAGS='-C target-feature=+crt-static' \
-    cargo build --release --target ${RUST_TARGET} && \
-    cp target/${RUST_TARGET}/release/just-mcp /tmp/just-mcp && \
+    cargo build --release --target "${RUST_TARGET}" && \
+    cp "target/${RUST_TARGET}/release/just-mcp" /tmp/just-mcp && \
     strip /tmp/just-mcp
 
 # Final stage - minimal runtime image

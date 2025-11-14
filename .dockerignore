@@ -43,9 +43,9 @@ AGENTS.md
 # Configuration files
 .env
 .env.*
-*.toml
-!Cargo.toml
-!Cargo.lock
+cog.toml
+clippy.toml
+rustfmt.toml
 
 # Logs and temporary files
 logs/
