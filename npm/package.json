@@ -36,7 +36,8 @@
     "bin",
     "index.js",
     "install.js",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "os": [
     "linux",
