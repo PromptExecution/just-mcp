@@ -18,12 +18,18 @@ repo_root = os.environ.get("JUST_MCP_REPO_ROOT")
 if not repo_root:
     raise SystemExit("JUST_MCP_REPO_ROOT is not set")
 repo = pathlib.Path(repo_root)
-cargo_path = repo / "Cargo.toml"
-cargo_text = cargo_path.read_text()
-match = re.search(r'^\s*version\s*=\s*"([^"]+)"', cargo_text, re.MULTILINE)
-if not match:
-    raise SystemExit("Unable to determine version from Cargo.toml")
-version = match.group(1)
+
+override = os.environ.get("JUST_MCP_OVERRIDE_VERSION")
+if override:
+    version = override
+else:
+    cargo_path = repo / "Cargo.toml"
+    cargo_text = cargo_path.read_text()
+    match = re.search(r'^\s*version\s*=\s*"([^"]+)"', cargo_text, re.MULTILINE)
+    if not match:
+        raise SystemExit("Unable to determine version from Cargo.toml")
+    version = match.group(1)
+
 server_path = repo / "server.json"
 server = json.loads(server_path.read_text())
 identifier = f"ghcr.io/promptexecution/just-mcp:{version}"

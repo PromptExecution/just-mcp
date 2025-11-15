@@ -85,6 +85,8 @@ jobs:
           cog bump --auto
           NEW_TAG=$(git describe --tags --abbrev=0)
           NEW_VERSION=${NEW_TAG#v}
+          JUST_MCP_OVERRIDE_VERSION="$NEW_VERSION" ./scripts/update-server-json-version.sh
+          git commit --amend --no-edit
           git push origin HEAD
           git push origin "${NEW_TAG}"
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
