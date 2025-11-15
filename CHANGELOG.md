@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git hooks for commit linting and testing
 
 - - -
+## v0.1.1 - 2025-11-15
+#### Bug Fixes
+- enable multi-arch container builds - (141240c) - elasticdotventures
+
+- - -
+
 ## v0.1.0 - 2025-11-15
 #### Bug Fixes
 - push version tags explicitly - (cced655) - elasticdotventures
