@@ -94,11 +94,31 @@ cd just-mcp
 cargo build --release
 ```
 
+#### Using Docker
+```bash
+# Pull the latest image from GitHub Container Registry
+docker pull ghcr.io/promptexecution/just-mcp:latest
+
+# Run with Docker
+docker run --rm -v $(pwd):/workspace ghcr.io/promptexecution/just-mcp:latest --stdio
+
+# Build locally
+docker build -t just-mcp:local .
+docker run --rm -v $(pwd):/workspace just-mcp:local --stdio
+```
+
+Available Docker image tags:
+- `latest` - Latest stable release
+- `X.Y.Z` - Specific version (e.g., `0.1.0`)
+- `X.Y` - Latest patch version (e.g., `0.1`)
+- `X` - Latest minor version (e.g., `0`)
+
 ### Claude Desktop Integration
 
 #### Using npm/npx
 Add to your Claude Desktop MCP configuration:
 
+#### Using Binary
 ```json
 {
   "mcpServers": {
@@ -134,6 +154,26 @@ Add to your Claude Desktop MCP configuration:
 }
 ```
 
+#### Using Docker
+```json
+{
+  "mcpServers": {
+    "just-mcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-v",
+        "${workspaceFolder}:/workspace",
+        "ghcr.io/promptexecution/just-mcp:latest",
+        "--stdio"
+      ]
+    }
+  }
+}
+```
+
 ### Usage Examples
 ```bash
 # Run as MCP server
@@ -141,6 +181,9 @@ just-mcp --stdio
 
 # Run in specific directory  
 just-mcp --directory /path/to/project --stdio
+
+# Using Docker
+docker run --rm -v $(pwd):/workspace ghcr.io/promptexecution/just-mcp:latest --stdio
 ```
 
 ## 🧪 **Testing**
@@ -257,6 +300,14 @@ This project is licensed under [LICENSE](LICENSE).
 - **CI Pipeline** (`ci.yml`): Multi-platform testing (Ubuntu, Windows, macOS), formatting, clippy, commit linting
 - **Release Pipeline** (`release.yml`): Automated versioning, changelog generation, GitHub releases, and crates.io publishing
 - **Binary Builds** (`build-binaries.yml`): Cross-platform binary compilation for npm and pip packages
+- **Container Pipeline** (`container.yaml`): Multi-platform Docker image builds (linux/amd64, linux/arm64) pushed to GitHub Container Registry
+
+#### **Docker Images**
+- Multi-platform builds for `linux/amd64` and `linux/arm64`
+- Minimal image size using static musl binaries and scratch base image
+- Automatic tagging with semantic versioning (major, major.minor, major.minor.patch, latest)
+- Published to GitHub Container Registry (ghcr.io)
+- Integrated with release workflow for automatic deployment
 
 #### **Crates.io Preparation**
 - Updated both `Cargo.toml` files with complete metadata (description, keywords, categories, license, etc.)
@@ -302,6 +353,11 @@ cargo install just-mcp
 
 # Download pre-built binaries
 wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-mcp-x86_64-unknown-linux-gnu.tar.gz
+# Or use Docker
+docker pull ghcr.io/promptexecution/just-mcp:latest
+
+# Or download from GitHub releases
+wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-mcp
 ```
 
 ## 🔗 **Related Projects**
