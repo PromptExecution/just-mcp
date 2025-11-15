@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git hooks for commit linting and testing
 
 - - -
+## v0.1.0 - 2025-11-15
+#### Bug Fixes
+- push release tags - (39eb93d) - elasticdotventures
+- stabilize release version detection - (a439595) - elasticdotventures
+- make server version script portable - (e50b364) - elasticdotventures
+#### Features
+- add MCP registry publishing - (43b0e1a) - elasticdotventures
+
+- - -
+
 ## v0.1.0 - 2025-07-25
 #### Bug Fixes
 - add changelog separator for cocogitto - (1d6101e) - elasticdotventures
