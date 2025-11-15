@@ -59,10 +59,18 @@ jobs:
       - name: Check if there are releasable changes
         id: check_changes
         run: |
-          if cog check --from-latest-tag; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "Validating commits since last tag..." # output: cog lint log
+          if ! cog check --from-latest-tag; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "Checking for releasable conventional commits..." # output: true when bump possible
+          if cog bump --auto --dry-run; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No releasable changes detected; skipping release." # output: log only
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
         continue-on-error: true
 
