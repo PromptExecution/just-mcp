@@ -32,6 +32,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - - -
 ## v0.1.0 - 2025-11-15
 #### Bug Fixes
+- push version tags explicitly - (cced655) - elasticdotventures
+- push release tags - (39eb93d) - elasticdotventures
+- stabilize release version detection - (a439595) - elasticdotventures
+- make server version script portable - (e50b364) - elasticdotventures
+#### Features
+- add MCP registry publishing - (43b0e1a) - elasticdotventures
+#### Miscellaneous
+- **(version)** v0.1.0 - (95000da) - github-actions[bot]
+
+- - -
+
+## v0.1.0 - 2025-11-15
+#### Bug Fixes
 - push release tags - (39eb93d) - elasticdotventures
 - stabilize release version detection - (a439595) - elasticdotventures
 - make server version script portable - (e50b364) - elasticdotventures
