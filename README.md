@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/just-mcp.svg)](https://crates.io/crates/just-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<!-- mcp-name: io.github.promptexecution/just-mcp -->
+<!-- mcp-name: io.github.PromptExecution/just-mcp -->
 
 **👋 A way to let LLMs speak Just**
 

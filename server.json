@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.promptexecution/just-mcp",
+  "name": "io.github.PromptExecution/just-mcp",
   "title": "Just MCP Server",
   "description": "Expose curated Justfile recipes via MCP for safe deterministic automation.",
   "version": "0.1.1",
