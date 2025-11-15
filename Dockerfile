@@ -7,7 +7,8 @@
 # https://docs.docker.com/reference/dockerfile/#automatic-platform-args-in-the-global-scope
 
 # Builder stage - compile just-mcp from source
-FROM --platform=${BUILDPLATFORM} rust:1.82-alpine AS builder
+# Need nightly for edition2024 support
+FROM --platform=${BUILDPLATFORM} rustlang/rust:nightly-alpine AS builder
 
 # Install build dependencies
 # Note: musl provides static linking by default, no need for separate static libs
