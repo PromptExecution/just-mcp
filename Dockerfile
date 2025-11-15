@@ -8,7 +8,8 @@
 
 # Builder stage - compile just-mcp from source
 # Need nightly for edition2024 support
-FROM --platform=${BUILDPLATFORM} docker.io/rustlang/rust:nightly-alpine AS builder
+FROM docker.io/rustlang/rust:nightly-alpine AS builder
+ARG TARGETARCH
 
 # Install build dependencies
 # Note: musl provides static linking by default, no need for separate static libs
@@ -17,7 +18,6 @@ RUN apk add --no-cache \
     pkgconfig
 
 # Set up cross-compilation targets based on target architecture
-ARG TARGETARCH
 RUN case "${TARGETARCH}" in \
     amd64) echo "x86_64-unknown-linux-musl" > /tmp/rust-target ;; \
     arm64) echo "aarch64-unknown-linux-musl" > /tmp/rust-target ;; \
