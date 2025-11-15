@@ -6,12 +6,18 @@ REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 
 cd "${REPO_ROOT}"
 
+export JUST_MCP_REPO_ROOT="${REPO_ROOT}"
+
 python - <<'PY'
 import json
 import pathlib
 import re
+import os
 
-repo = pathlib.Path(__file__).resolve().parents[1]
+repo_root = os.environ.get("JUST_MCP_REPO_ROOT")
+if not repo_root:
+    raise SystemExit("JUST_MCP_REPO_ROOT is not set")
+repo = pathlib.Path(repo_root)
 cargo_path = repo / "Cargo.toml"
 cargo_text = cargo_path.read_text()
 match = re.search(r'^\s*version\s*=\s*"([^"]+)"', cargo_text, re.MULTILINE)
