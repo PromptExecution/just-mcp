@@ -8,7 +8,7 @@
 
 # Builder stage - compile just-mcp from source
 # Need nightly for edition2024 support
-FROM --platform=${BUILDPLATFORM} rustlang/rust:nightly-alpine AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/rustlang/rust:nightly-alpine AS builder
 
 # Install build dependencies
 # Note: musl provides static linking by default, no need for separate static libs
