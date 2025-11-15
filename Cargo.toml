@@ -3,7 +3,7 @@ members = ["just-mcp-lib"]
 
 [package]
 name = "just-mcp"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Brian Horakh <brian@promptexecution.com>"]
 description = "Production-ready MCP (Model Context Protocol) server for Justfile integration"
