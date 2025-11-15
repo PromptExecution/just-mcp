@@ -83,6 +83,7 @@ jobs:
         run: |
           # Generate changelog and bump version
           cog bump --auto
+          git push origin HEAD --follow-tags
           
           # Get the new version from the newly created tag
           NEW_TAG=$(git describe --tags --abbrev=0)
