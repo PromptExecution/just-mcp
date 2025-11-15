@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git hooks for commit linting and testing
 
 - - -
+## v0.1.4 - 2025-11-15
+#### Bug Fixes
+- sync server metadata during release - (a6fd776) - elasticdotventures
+
+- - -
+
 ## v0.1.3 - 2025-11-15
 #### Bug Fixes
 - drop websiteUrl for registry - (c75c631) - elasticdotventures
