@@ -84,15 +84,16 @@ jobs:
           # Generate changelog and bump version
           cog bump --auto
           
-          # Get the new version
-          NEW_VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
+          # Get the new version from the newly created tag
+          NEW_TAG=$(git describe --tags --abbrev=0)
+          NEW_VERSION=${NEW_TAG#v}
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           
           # Generate changelog for the release
-          cog changelog --at "v${NEW_VERSION}" > RELEASE_NOTES.md
+          cog changelog --at "${NEW_TAG}" > RELEASE_NOTES.md
           
           # Create GitHub release
-          gh release create "v${NEW_VERSION}" \
+          gh release create "${NEW_TAG}" \
             --title "Release v${NEW_VERSION}" \
             --notes-file RELEASE_NOTES.md \
             --draft=false \
