@@ -1,0 +1,60 @@
+# Git and version control
+.git
+.github
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.cursor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.roo
+.taskmaster
+.windsurfrules
+.roomodes
+.rooignore
+
+# Build artifacts and cache
+target/
+**/target/
+*.rs.bk
+*.pdb
+dist/
+build/
+
+# Test and development files
+tests/
+test-fixtures/
+integration_test/
+examples/
+
+# Documentation and project files
+*.md
+!README.md
+LICENSE
+TODO.pm
+RMCP_SYNTAX_FIXES.md
+CHANGELOG.md
+AGENTS.md
+
+# Configuration files
+.env
+.env.*
+cog.toml
+clippy.toml
+rustfmt.toml
+
+# Logs and temporary files
+logs/
+cache/
+*.log
+tmp/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
