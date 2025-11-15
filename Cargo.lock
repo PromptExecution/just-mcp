@@ -484,7 +484,7 @@ dependencies = [
 
 [[package]]
 name = "just-mcp"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "just-mcp-lib",
@@ -498,7 +498,7 @@ dependencies = [
 
 [[package]]
 name = "just-mcp-lib"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "dotenvy",
  "rmcp",
