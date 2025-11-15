@@ -47,3 +47,20 @@ test_output.txt
 .cursor/
 .vscode/
 .idea/
+
+# npm package artifacts
+npm/bin/
+npm/*.tgz
+npm/node_modules/
+
+# Python package artifacts
+python/dist/
+python/build/
+python/*.egg-info/
+python/just_mcp/bin/
+python/__pycache__/
+python/*.pyc
+
+# Release archives
+*.tar.gz
+*.zip

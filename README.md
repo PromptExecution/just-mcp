@@ -61,17 +61,37 @@ b00t mcp export just-mcp
 
 ## 🏃 **Quick Start**
 
-### Installation & Setup
+### Installation
 
-#### From Source
+Choose your preferred installation method:
+
+#### npm (JavaScript/TypeScript)
 ```bash
-# Clone and build
-git clone <repository-url>
+# Install globally
+npm install -g just-mcp
+
+# Or use with npx (no installation required)
+npx just-mcp --stdio
+```
+
+#### pip (Python)
+```bash
+# Install with pip
+pip install just-mcp
+
+# Or use with uvx (recommended)
+uvx just-mcp --stdio
+```
+
+#### Cargo (Rust)
+```bash
+# Install from crates.io
+cargo install just-mcp
+
+# Or build from source
+git clone https://github.com/promptexecution/just-mcp
 cd just-mcp
 cargo build --release
-
-# Test the server
-cargo run -- --stdio
 ```
 
 #### Using Docker
@@ -94,9 +114,35 @@ Available Docker image tags:
 - `X` - Latest minor version (e.g., `0`)
 
 ### Claude Desktop Integration
+
+#### Using npm/npx
 Add to your Claude Desktop MCP configuration:
 
 #### Using Binary
+```json
+{
+  "mcpServers": {
+    "just-mcp": {
+      "command": "npx",
+      "args": ["-y", "just-mcp", "--stdio"]
+    }
+  }
+}
+```
+
+#### Using pip/uvx
+```json
+{
+  "mcpServers": {
+    "just-mcp": {
+      "command": "uvx",
+      "args": ["just-mcp", "--stdio"]
+    }
+  }
+}
+```
+
+#### Using cargo or manual install
 ```json
 {
   "mcpServers": {
@@ -253,6 +299,7 @@ This project is licensed under [LICENSE](LICENSE).
 #### **GitHub Actions CI/CD**
 - **CI Pipeline** (`ci.yml`): Multi-platform testing (Ubuntu, Windows, macOS), formatting, clippy, commit linting
 - **Release Pipeline** (`release.yml`): Automated versioning, changelog generation, GitHub releases, and crates.io publishing
+- **Binary Builds** (`build-binaries.yml`): Cross-platform binary compilation for npm and pip packages
 - **Container Pipeline** (`container.yaml`): Multi-platform Docker image builds (linux/amd64, linux/arm64) pushed to GitHub Container Registry
 
 #### **Docker Images**
@@ -283,14 +330,29 @@ This project is licensed under [LICENSE](LICENSE).
 #### **Release Process:**
 - **Automated Versioning**: Cocogitto analyzes commit messages for semantic versioning
 - **GitHub Releases**: Automatic changelog generation and GitHub release creation
+- **Binary Distribution**: Pre-built binaries for Linux (x86_64, aarch64), macOS (x86_64, aarch64), and Windows (x86_64)
 - **Crates.io Publishing**: Library crate (`just-mcp-lib`) publishes first, then binary crate (`just-mcp`)
+- **npm Publishing**: Wrapper package for easy Node.js/TypeScript integration
+- **PyPI Publishing**: Python wrapper package for pip/uvx installation
 - **CI/CD Pipeline**: Multi-platform testing (Ubuntu, Windows, macOS) with formatting and clippy checks
 
-#### **Installation:**
+#### **Installation Methods:**
 ```bash
-# Install from crates.io
+# npm (JavaScript/TypeScript ecosystems)
+npm install -g just-mcp
+# or
+npx just-mcp --stdio
+
+# pip (Python ecosystems)
+pip install just-mcp
+# or
+uvx just-mcp --stdio
+
+# cargo (Rust ecosystem)
 cargo install just-mcp
 
+# Download pre-built binaries
+wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-mcp-x86_64-unknown-linux-gnu.tar.gz
 # Or use Docker
 docker pull ghcr.io/promptexecution/just-mcp:latest
 
