@@ -58,6 +58,9 @@ RUN RUST_TARGET=$(cat /tmp/rust-target) && \
 # Final stage - minimal runtime image
 FROM scratch
 
+# MCP registry label ensures OCI metadata verifies package ownership
+LABEL io.modelcontextprotocol.server.name="io.github.promptexecution/just-mcp"
+
 # Copy the static binary from builder
 COPY --from=builder /tmp/just-mcp /usr/local/bin/just-mcp
 

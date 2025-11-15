@@ -41,6 +41,10 @@ server:
 clean:
 	cargo clean
 
+# Keep server.json metadata aligned with the Cargo version
+update-server-json:
+	./scripts/update-server-json-version.sh
+
 install-claude-mcp:
 	claude mcp add context7 -- npx -y @upstash/context7-mcp
 	claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
@@ -55,4 +59,3 @@ install-claude-mcp:
 	# cargo install --git https://github.com/PromptExecution/cratedocs-mcp --locked
 	claude mcp add fetch-url-as-markdown -- npx -y @upstash/fetch-url-as-markdown
 	claude mcp add rust-crate-doc -- cratedocs stdio --debug
-
