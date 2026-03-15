@@ -15,6 +15,7 @@ use rmcp::{
 
 use crate::executor::{ExecutionError, execute_recipe};
 use crate::parser::{ParserError, parse_justfile_str};
+use crate::registry::JustfileRegistry;
 use crate::{Justfile, Recipe};
 
 #[derive(Debug, Snafu)]
@@ -33,6 +34,9 @@ pub enum McpServerError {
 
     #[snafu(display("Justfile not found at path: {}", path))]
     JustfileNotFound { path: String },
+
+    #[snafu(display("Justfile not registered: {} — register it via b00t justfile datum or --allow flag", path))]
+    JustfileNotRegistered { path: String },
 
     #[snafu(display("Recipe '{}' not found", recipe_name))]
     RecipeNotFound { recipe_name: String },
@@ -110,13 +114,26 @@ pub struct ExecutionOutput {
 pub struct JustMcpServer {
     working_dir: std::path::PathBuf,
     tool_router: ToolRouter<Self>,
+    registry: JustfileRegistry,
 }
 
 impl JustMcpServer {
+    /// Create with permissive registry — any justfile in `working_dir` is accessible.
+    /// Use `with_registry` to enable the sandbox gate.
     pub fn new(working_dir: impl AsRef<Path>) -> Self {
         Self {
             working_dir: working_dir.as_ref().to_path_buf(),
             tool_router: Self::tool_router(),
+            registry: JustfileRegistry::permissive(),
+        }
+    }
+
+    /// Create with a strict registry — only registered justfiles are in scope.
+    pub fn with_registry(working_dir: impl AsRef<Path>, registry: JustfileRegistry) -> Self {
+        Self {
+            working_dir: working_dir.as_ref().to_path_buf(),
+            tool_router: Self::tool_router(),
+            registry,
         }
     }
 
@@ -137,6 +154,14 @@ impl JustMcpServer {
                     path: self.working_dir.display().to_string(),
                 })?
         };
+
+        // Registry gate — absent from scope is not an error message, it's silence.
+        // The error message here is only surfaced in strict mode (non-empty registry).
+        if !self.registry.is_in_scope(&justfile_path) {
+            return Err(McpServerError::JustfileNotRegistered {
+                path: justfile_path.display().to_string(),
+            });
+        }
 
         let content = std::fs::read_to_string(&justfile_path).context(IoSnafu)?;
 

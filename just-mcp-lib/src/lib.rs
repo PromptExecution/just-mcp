@@ -2,7 +2,10 @@ pub mod environment;
 pub mod executor;
 pub mod mcp_server;
 pub mod parser;
+pub mod registry;
 pub mod validator;
+
+pub use registry::JustfileRegistry;
 
 use std::collections::HashMap;
 

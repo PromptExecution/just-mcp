@@ -1,5 +1,6 @@
 use clap::{Arg, Command};
 use just_mcp_lib::mcp_server::JustMcpServer;
+use just_mcp_lib::JustfileRegistry;
 use rmcp::{ServiceExt, transport::stdio};
 use std::error::Error;
 use std::path::Path;
@@ -24,10 +25,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 .help("Run as MCP server using stdio transport")
                 .action(clap::ArgAction::SetTrue),
         )
+        .arg(
+            Arg::new("allow")
+                .long("allow")
+                .value_name("JUSTFILE")
+                .help("Register a justfile path for execution (repeatable; omit for permissive mode)")
+                .action(clap::ArgAction::Append),
+        )
         .get_matches();
 
     let working_dir = matches.get_one::<String>("working-dir").unwrap();
     let working_path = Path::new(working_dir);
+
+    // Build registry from --allow flags; empty = permissive mode
+    let registry = match matches.get_many::<String>("allow") {
+        Some(paths) => {
+            let reg = JustfileRegistry::from_paths(paths.map(|p| Path::new(p)));
+            eprintln!(
+                "just-mcp: strict mode — {} registered justfile(s)",
+                reg.len()
+            );
+            reg
+        }
+        None => {
+            eprintln!("just-mcp: permissive mode — all justfiles accessible");
+            JustfileRegistry::permissive()
+        }
+    };
 
     if matches.get_flag("stdio") {
         // Run as MCP server
@@ -36,7 +60,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             working_path.display()
         );
 
-        let server = JustMcpServer::new(working_path);
+        let server = JustMcpServer::with_registry(working_path, registry);
 
         // Start the MCP server with stdio transport
         let running_service = server.serve(stdio()).await?;
