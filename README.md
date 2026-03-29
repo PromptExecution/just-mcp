@@ -379,3 +379,8 @@ wget https://github.com/promptexecution/just-mcp/releases/latest/download/just-m
 
 - [just-vscode](https://github.com/promptexecution/just-vscode) - VSCode extension with LSP integration for enhanced Just authoring
 - [just-awesome-agents](https://github.com/promptexecution/just-awesome-agents) - Collection of patterns and tools for agent execution with Just# Test change to trigger pre-push hook
+
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/promptexecution-just-mcp).
+
