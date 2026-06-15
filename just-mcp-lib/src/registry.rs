@@ -10,31 +10,45 @@ use std::path::{Path, PathBuf};
 /// Two modes:
 /// - **Permissive** (empty registry): all justfiles allowed — backward compatible.
 /// - **Strict** (non-empty registry): only registered absolute paths allowed.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct JustfileRegistry {
     /// Canonicalized absolute paths of registered justfiles.
-    /// Empty = permissive mode (any justfile allowed).
     allowed: HashSet<PathBuf>,
+    /// True when from_paths() was called with non-empty input.
+    /// Prevents all-invalid-paths from silently falling back to permissive mode.
+    strict: bool,
+}
+
+impl Default for JustfileRegistry {
+    fn default() -> Self {
+        Self { allowed: HashSet::new(), strict: false }
+    }
 }
 
 impl JustfileRegistry {
     /// Create a permissive registry (no restrictions).
     pub fn permissive() -> Self {
-        Self::default()
+        Self { allowed: HashSet::new(), strict: false }
     }
 
     /// Create a strict registry from a list of allowed paths.
     /// Paths are canonicalized; non-existent paths are silently dropped.
+    /// If ALL paths fail to canonicalize the registry is still STRICT (deny all),
+    /// not permissive — caller intent was to restrict access.
     pub fn from_paths(paths: impl IntoIterator<Item = impl AsRef<Path>>) -> Self {
+        let mut had_input = false;
         let allowed = paths
             .into_iter()
+            .inspect(|_| had_input = true)
             .filter_map(|p| p.as_ref().canonicalize().ok())
             .collect();
-        Self { allowed }
+        Self { allowed, strict: had_input }
     }
 
     /// Register a single path. Non-existent paths are silently dropped.
+    /// Sets strict mode: caller intent was to restrict access.
     pub fn register(&mut self, path: impl AsRef<Path>) {
+        self.strict = true;
         if let Ok(canonical) = path.as_ref().canonicalize() {
             self.allowed.insert(canonical);
         }
@@ -55,8 +69,9 @@ impl JustfileRegistry {
     }
 
     /// True when the registry is in permissive mode (no restrictions).
+    /// Permissive = default() or permissive() was called (not from_paths/register).
     pub fn is_permissive(&self) -> bool {
-        self.allowed.is_empty()
+        !self.strict
     }
 
     /// Number of registered justfiles (0 = permissive).
@@ -98,9 +113,11 @@ mod tests {
     }
 
     #[test]
-    fn nonexistent_path_excluded_from_registry() {
+    fn nonexistent_path_all_invalid_is_strict_deny_all() {
         let registry = JustfileRegistry::from_paths(["/does/not/exist/justfile"]);
-        // Non-existent path silently dropped → permissive mode
-        assert!(registry.is_permissive());
+        // Non-existent paths dropped but strict mode preserved — deny all, not permissive
+        assert!(!registry.is_permissive());
+        assert!(!registry.is_in_scope("/does/not/exist/justfile"));
+        assert!(!registry.is_in_scope("/any/other/path"));
     }
 }
