@@ -59,3 +59,13 @@ install-claude-mcp:
 	# cargo install --git https://github.com/PromptExecution/cratedocs-mcp --locked
 	claude mcp add fetch-url-as-markdown -- npx -y @upstash/fetch-url-as-markdown
 	claude mcp add rust-crate-doc -- cratedocs stdio --debug
+
+# ── wrkflw — local CI gate ──────────────────────────────────────────────────
+ci-validate:
+    wrkflw validate .github/workflows/ci.yml
+
+ci-local:
+    wrkflw run --runtime emulation .github/workflows/ci.yml
+
+ci-watch:
+    wrkflw watch .github/workflows/ci.yml
